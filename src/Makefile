@@ -28,7 +28,7 @@ PACKAGES=str,config-file,xmlm
 GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)
-INCLUDES=
+INCLUDES=-I sqml -I dbf
 
 COMPFLAGS=$(INCLUDES) -annot
 LINKFLAGS=$(INCLUDES)
@@ -40,19 +40,19 @@ DBFORGE_BYTE=$(DBFORGE).byte
 DBFORGE_GTK=$(DBFORGE)-gtk
 DBFORGE_GTK_BYTE=$(DBFORGE_GTK).byte
 
-LIB_DBF=dbforge.cmxa
+LIB_DBF=dbf/dbforge.cmxa
 LIB_DBF_BYTE=$(LIB_DBF:.cmxa=.ma)
 
-LIB_DBF_GTK=dbforge_gtk.cmxa
+LIB_DBF_GTK=dbf/dbforge_gtk.cmxa
 LIB_DBF_GTK_BYTE=$(LIB_DBF_GTK:.cmxa=.cma)
 
-LIB_SQL=dbf_sql.cmxa
+LIB_SQL=dbf/dbf_sql.cmxa
 LIB_SQL_BYTE=$(LIB_SQL:.cmxa=.cma)
 
-LIB_MYSQL=dbf_mysql.cmxa
+LIB_MYSQL=dbf/dbf_mysql.cmxa
 LIB_MYSQL_BYTE=$(LIB_MYSQL:.cmxa=.cma)
 
-LIB_SQML=sqml.cmxa
+LIB_SQML=sqml/sqml.cmxa
 LIB_SQML_BYTE=$(LIB_SMQL:.cmxa=.cma)
 
 TMPL=tmpl-engine

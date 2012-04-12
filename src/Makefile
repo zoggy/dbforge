@@ -24,7 +24,7 @@
 
 include ../master.Makefile
 
-PACKAGES=str,config-file,xmlm
+PACKAGES=str,config-file
 GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)

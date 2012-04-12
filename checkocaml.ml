@@ -923,7 +923,6 @@ let _ =
     !print msg; exit 1
 
 let _ = !print "\n### checking required tools and libraries ###\n"
-let _ = check_ocamlfind_package conf "xmlm";;
 let _ = check_ocamlfind_package conf "config-file";;
 let _ = check_ocamlfind_package conf "mysql";;
 let _ = check_ocamlfind_package conf "lablgtk2";;

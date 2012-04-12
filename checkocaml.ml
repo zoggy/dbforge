@@ -865,108 +865,6 @@ let add_conf_variables c =
 
 (*/c==m=[OCaml_conf]=0.5=t==*)
 
-(*c==v=[OCaml_conf.detect_lablgtk2]=0.3====*)
-let detect_lablgtk2 ?(modes=[`Byte;`Opt]) conf =
-  let includes =
-    ["default install",
-      [Filename.concat (ocaml_libdir conf) "lablgtk2"]]
-  in
-  let includes =
-    match ocamlfind_query conf "lablgtk2" with
-      None -> includes
-    | Some s -> ("with ocamlfind", [s]) :: includes
-  in
-  let libs = ["lablgtk.cma"] in
-  let f (mes, includes) mode =
-    let mes = Printf.sprintf "checking for Lablgtk2 (%s) %s... "
-	(string_of_mode mode) mes
-    in
-    can_link ~mes mode conf ~includes ~libs []
-  in
-  let rec iter = function
-      [] -> ([], [])
-    | incs :: q ->
-	let f = f incs in
-	if List.for_all f modes then
-	  (snd incs, libs)
-	else
-	  iter q
-  in
-  iter includes
-(*/c==v=[OCaml_conf.detect_lablgtk2]=0.3====*)
-
-let detect_lablgtkextras ?(modes=[`Byte;`Opt]) lablgtk_incs conf =
-  let includes =
-    ["default install",
-      (Filename.concat (ocaml_libdir conf) "lablgtk-extras") :: lablgtk_incs
-    ]
-  in
-  let includes =
-    match ocamlfind_query conf "lablgtkextras" with
-      None -> includes
-    | Some s ->
-        match ocamlfind_query conf "lablgtkextras" with
-          None -> includes
-        | Some s2 -> ("with ocamlfind", [s2;s]) :: includes
-  in
-  let libs =
-    [ "unix.cma" ;
-      "lablgtk.cma" ;
-      "lablgtksourceview2.cma";
-      "config_file.cmo";
-      "xml-light.cma";
-      "lablgtkextras.cma"]
-  in
-  let f (mes, includes) mode =
-    let mes = Printf.sprintf "checking for Lablgtk-extras (%s) %s... "
-        (string_of_mode mode) mes
-    in
-    can_link ~mes mode conf ~includes ~libs []
-  in
-  let rec iter = function
-      [] -> ([], [])
-    | incs :: q ->
-        let f = f incs in
-        if List.for_all f modes then
-          (snd incs, libs)
-        else
-          iter q
-  in
-  iter includes
-;;
-
-
-(*c==v=[OCaml_conf.detect_xml_light]=0.3====*)
-let detect_xml_light ?(modes=[`Byte;`Opt]) conf =
-  let includes =
-     ["default install", [] ;
-      "+xml-light style", [Filename.concat (ocaml_libdir conf) "xml-light"] ;
-     ]
-  in
-  let includes =
-    match ocamlfind_query conf "xml-light" with
-      None -> includes
-    | Some s -> ("with ocamlfind", [s]) :: includes
-  in
-  let libs = ["xml-light.cma"] in
-  let f (mes, includes) mode =
-    let mes = Printf.sprintf "checking for Xml-light (%s) %s... "
-	(string_of_mode mode) mes
-    in
-    can_link ~mes mode conf ~includes ~libs []
-  in
-  let rec iter = function
-      [] -> ([], [])
-    | incs :: q ->
-	let f = f incs in
-	if List.for_all f modes then
-	  (snd incs, libs)
-	else
-	  iter q
-  in
-  iter includes
-(*/c==v=[OCaml_conf.detect_xml_light]=0.3====*)
-
 let ocaml_required = [3;9;0]
 let conf = ocaml_conf ();;
 print_conf conf;;
@@ -978,12 +876,13 @@ let _ =
     in
     !print msg; exit 1
 
-let modes = `Byte :: (if conf.ocamlopt = "" then [] else [`Opt])
 let _ = !print "\n### checking required tools and libraries ###\n"
+let () = check_ocamlfind_package conf "xmlm";;
 let () = check_ocamlfind_package conf "config-file";;
+let () = check_ocamlfind_package conf "mysql";;
 let () = check_ocamlfind_package conf "lablgtk2";;
+let () = check_ocamlfind_package conf "lablgtk2.glade";;
 let () = check_ocamlfind_package conf "lablgtk2-extras.configwin";;
-let () = check_ocamlfind_package conf  ~min_version: [1;0] "diff";;
 
 let _ = !print "\n###\n"
 

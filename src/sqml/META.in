@@ -1,0 +1,6 @@
+version = "@VERSION@"
+description = "Parsing SQL queries"
+requires = ""
+archive(byte) = "sqml.cma"
+archive(native) = "sqml.cmxa"
+archive(toploop) = "sqml.cma"

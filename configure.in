@@ -25,17 +25,14 @@
 # check for one particular file of the sources
 AC_INIT(master.Makefile.in)
 
-VERSION=0.8
-PACKAGE=camlget
+VERSION=1.0
+PACKAGE=dbforge
 
 # The root directory where we will compile
 ROOT=`pwd`
 
 ocaml unix.cma str.cma checkocaml.ml ocaml_config.sh || exit 1
 . ./ocaml_config.sh
-
-echo "ocaml library path is $OCAMLLIB"
-
 
 ##########################
 # debugging
@@ -71,9 +68,10 @@ AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 
 # Finally create the master.Makefile.in
-ACFILES="master.Makefile META src/cgversion.ml"
+ACFILES="master.Makefile src/dbforge/META src/sqml/META src/dbforge/dbf_installation.ml"
 AC_OUTPUT($ACFILES)
 chmod a-w master.Makefile
-chmod a-w META
-chmod a-w src/cgversion.ml
+chmod a-w src/dbforge/META
+chmod a-w src/sqml/META
+chmod a-w src/dbforge/dbf_installation.ml
 

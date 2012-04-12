@@ -1,0 +1,21 @@
+version = "@VERSION@"
+description = "Library of the DBForge tool"
+requires = "str,xmlm,sqml"
+archive(byte) = "dbforge.cma"
+archive(native) = "dbforge.cmxa"
+archive(toploop) = "dbforge.cma"
+package "gtk" (
+  version = "@VERSION@"
+  description = "LablGtk interface"
+  requires = "dbforge,lablgtk2-extras.configwin,lablgtk2,lablgtk2.glade"
+  archive(byte) = "dbforge_gtk.cma"
+  archive(native) = "dbforge_gtk.cmxa"
+)
+package "mysql" (
+  version = "@VERSION@"
+  description = "MySQL interface"
+  requires = "mysql"
+  archive(byte) = "dbf_mysql.cma"
+  archive(native) = "dbforge_gtk.cmxa"
+
+)

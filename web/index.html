@@ -92,25 +92,23 @@ You will find several files.
 <p><code>base.xml</code> is the file containing the schema. It can be edited with the graphical
 interface, launched by the following command:
 </p>
-<div class="code"><pre>dbforge2.gui.{x,byte} base.xml</pre></div>
+<div class="code"><pre>dbforge-gtk[.byte] base.xml</pre></div>
 <p>The OCaml code is generated from this file with the follownig command:
 </p>
-<div class="code"><pre>dbforge2.{x,byte} -o base.ml base.xml</pre></div>
+<div class="code"><pre>dbforge[.byte] -o base.ml base.xml</pre></div>
 <p>The file
 <code>base.ml</code> then contains the generated OCaml code. This code uses two modules
-installed with Cameleon2: Dbf_sql_driver and Dbf_sql_misc.
+installed with DBForge: Dbf_sql_driver and Dbf_sql_misc.
 You can get the module interface of the generated file with the following command:
 </p>
-<div class="code"><pre>ocamlc -I +cameleon2 -i base.ml &gt; base.mli</pre></div>
+<div class="code"><pre>ocamlfind ocamlc -package dbforge.mysql -i base.ml &gt; base.mli</pre></div>
 <p>The generated code is composed of functors, one per table and one more
 for the additional queries defined in the schema. These functors take in
-parameter a module of type Dbf_sql_driver.SqlDriver, which allows to abstract
+parameter a module of type <code>Dbf_sql_driver.SqlDriver</code>, which allows to abstract
 the underlying database system, by providing a common interface.
 </p>
-<p><code>example.ml</code> is the main file of the example. It uses the module Dbf_mysql whose source is
-installed with Cameleon2. Since it needs the OCaml-MySQL library to be installed,
-this module is not compiled when Cameleon2 is installed, but must be compiled by
-the application which uses it. This module has the type Dbf_sql_driver.SqlDriver and
+<p><code>example.ml</code> is the main file of the example. It uses the module <code>Dbf_mysql</code>,
+compiled and installed with DBForge. This module has the type <code>Dbf_sql_driver.SqlDriver</code> and
 can therefore be passed in parameter to the functors of the generated code in
 file
 <code>base.ml</code>.
@@ -131,8 +129,13 @@ first release after extraction from Cameleon.</li>
 DBForge requires the following libraries to be installed:
 </p>
 <ul>
-<li><a href="http://lablgtk.forge.ocamlcore.org/">LablGtk</a> &gt;= 2.14.1, installed with ocamlfind,</li>
-
+<li><a href="http://caml.inria.fr/">OCaml</a> &gt; 3.11,</li>
+<li><a href="http://projects.camlcity.org/projects/findlib.html">findlib</a>,</li>
+<li><a href="http://lablgtk.forge.ocamlcore.org/">LablGtk</a> &gt;= 2.14.2, installed with ocamlfind,</li>
+<li><a href="http://config-file.forge.ocamlcore.org/">Config-file</a> &gt;= 1.1,</li>
+<li><a href="http://gtk-extras.forge.ocamlcore.org/">LablGtk-extras</a> &gt;= 1.1,</li>
+<li><a href="http://raevnos.pennmush.org/code/ocaml-mysql/">OCaml-MySQL</a> &gt;= 1.0.4,</li>
+<li><a href="http://tech.motion-twin.com/xmllight.html">Xml-light</a>.</li>
 </ul>
 <p>To compile and install:
 </p>
@@ -143,10 +146,10 @@ DBForge requires the following libraries to be installed:
 </ul>
 <p>
 This will install the following findlib packages:
- dbforge, dbforge.gtk, dbforge.sql, dbforge.mysql and sqml
+ <code>dbforge, dbforge.gtk, dbforge.sql, dbforge.mysql and sqml</code>
 </p>
 <p>
-Executables (dbforge, dbforge-gtk) will be installed in
+Executables (<code>dbforge[.byte]</code>, <code>dbforge-gtk[.byte]</code>) will be installed in
 ocaml bin directory.
 </p>
 

@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+<title>DBForge: Generate OCaml code to access SQL databases</title>
+<link type="text/css" rel="stylesheet" href="style.css" title="Default"/>
+</head>
+<body><div id="page">
+<div class="container">
+<div class="row-fluid">
+<div class="span4">&nbsp;</div>
+<div class="span6"><h1>DBForge</h1></div>
+</div>
+<div class="row-fluid">
+<div class="span2">&nbsp;</div>
+<!-- ENGLISH -->
+<div class="span8 ">
+<h3>What is DBForge ?</h3>
+<p>DBForge is a tool to describe database schemas and generate
+OCaml code to access these databases.
+</p>
+<h3>Principle</h3>
+<p>
+The idea of the tool is based on the following problem:
+The creation of functions executing SQL queries
+</p>
+<ul><li>is repetitive:
+ 	translation of parameters into strings and concatenation of strings
+	to create the query, execution of the query, test on the return value,
+	translation of the returned data (for
+  <code>select</code> queries) into the correct OCaml type,
+</li>
+<li>is error prone:
+	an error in the concatenation of strings to create the query
+	(for example a missing blank) or in the concatenated strings
+	will cause an error
+<em>at run time</em>,
+</li>
+<li>does not allow a high maintainability: indeed, when the database
+	schema is modified, one must verify that each query is still correct
+	against the new database schema.
+</li>
+</ul>
+<p>To solve these problems, we want to
+</p>
+<ul>
+<li>automatically generate the functions executing basic queries on each table,
+</li>
+<li>allow the user to define complex queries, using the SQL language ;
+	the OCaml functions executing these queries being automatically
+	generated, we want to guarantee
+<em> at compile time </em>that execution of these queries will not fail at run time
+	(because of errors like syntax errors or referencing a non-existent
+	column of a table, for example),
+</li>
+<li>automatically verify and invalidate some queries when the database schema
+is modified.
+</li>
+</ul>
+<p>To do so, we must have the following information about each colum of each table:
+</p>
+<ul>
+<li>its name,
+</li>
+<li>its type definition for the target DBMS,
+</li>
+<li>some attributes like whether the column is nullable, whether it's a key
+	for this table,
+</li>
+<li>its OCaml type in the source code we want to generate,
+</li>
+<li>the functions to use to translate DBMS (resp. OCaml) values into OCaml
+	(resp. DBMS) values.
+</li>
+</ul>
+<p>The list of tables with the above information for each column is what
+we call the database schema.
+</p>
+<p>The DBForge tool allows to edit such a schema in a graphical user interface,
+and generates the corresponding OCaml code. The user can also define
+SQL queries to be embedded in OCaml functions in the generared code.
+For now, only &quot;select&quot; and &quot;union&quot; queries are accepted.
+</p>
+
+<h3>Example</h3>
+<p>The distribution archive contains an example in the directory
+<code>src/example</code>.
+You will find several files.
+</p>
+<p><code>Makefile</code> is the file used to compile with <code>make</code>.
+</p>
+<p><code>base.xml</code> is the file containing the schema. It can be edited with the graphical
+interface, launched by the following command:
+</p>
+<div class="code"><pre>dbforge2.gui.{x,byte} base.xml</pre></div>
+<p>The OCaml code is generated from this file with the follownig command:
+</p>
+<div class="code"><pre>dbforge2.{x,byte} -o base.ml base.xml</pre></div>
+<p>The file
+<code>base.ml</code> then contains the generated OCaml code. This code uses two modules
+installed with Cameleon2: Dbf_sql_driver and Dbf_sql_misc.
+You can get the module interface of the generated file with the following command:
+</p>
+<div class="code"><pre>ocamlc -I +cameleon2 -i base.ml &gt; base.mli</pre></div>
+<p>The generated code is composed of functors, one per table and one more
+for the additional queries defined in the schema. These functors take in
+parameter a module of type Dbf_sql_driver.SqlDriver, which allows to abstract
+the underlying database system, by providing a common interface.
+</p>
+<p><code>example.ml</code> is the main file of the example. It uses the module Dbf_mysql whose source is
+installed with Cameleon2. Since it needs the OCaml-MySQL library to be installed,
+this module is not compiled when Cameleon2 is installed, but must be compiled by
+the application which uses it. This module has the type Dbf_sql_driver.SqlDriver and
+can therefore be passed in parameter to the functors of the generated code in
+file
+<code>base.ml</code>.
+ The modules obtained then offer the functions to access the database.
+</p>
+<h3>Download</h3>
+<p>
+DBForge is <a href="https://github.com/zoggy/dbforge">hosted on Github</a>.
+</p>
+<h4>Releases</h4>
+<ul>
+<li><a href="dbforge-2.0.tar.gz">2.0</a> [2012-04-12]:
+first release after extraction from Cameleon.</li>
+</ul>
+
+<h3>Installation</h3>
+<p>
+DBForge requires the following libraries to be installed:
+</p>
+<ul>
+<li><a href="http://lablgtk.forge.ocamlcore.org/">LablGtk</a> &gt;= 2.14.1, installed with ocamlfind,</li>
+
+</ul>
+<p>To compile and install:
+</p>
+<ul>
+<li><span class="code">tar xvfz dbforge-XXX.tar.gz</span></li>
+<li><span class="code">cd dbforge-XXX</span></li>
+<li><span class="code">make all install</span></li>
+</ul>
+<p>
+This will install the following findlib packages:
+ dbforge, dbforge.gtk, dbforge.sql, dbforge.mysql and sqml
+</p>
+<p>
+Executables (dbforge, dbforge-gtk) will be installed in
+ocaml bin directory.
+</p>
+
+<h3>License</h3>
+DBForge is released under the <a href="http://www.gnu.org/licenses/gpl.html">LGPL v3</a>.
+
+<h3>Author and contact</h3>
+Maxence Guesdon <code>&lt;Maxence 'DOT' Guesdon 'AT' inria 'DOT' fr&gt;</code>
+with Pierre-Yves Strub and Nadji Gauthier.
+
+</div>
+<div class="span2">&nbsp;</div>
+<!--
+<div class="span1">&nbsp;</div>
+<div class="span5 lang french">
+<h3>Qu'est-ce que DBForge ?</h3>
+<p>DBForge est un outil pour décrire des schémas de base de données
+et générer le code OCaml permettant d'accéder à ces bases.
+</p>
+<h3>Principe</h3>
+<p>L'idée de l'outil est basée sur le problème suivant:
+La création de fonctions exécutant des requêtes SQL
+</p>
+<ul>
+<li>est répétitive: traduction de paramètres en chaînes de caractères et
+concaténation pour créer les requête, exécution de la requête, test de la
+valeur de retour, traduction des données (pour les requêtes
+<code>select</code>) vers les type OCaml correspondant,
+</li>
+<li>est source d'erreurs: une erreur dans la concaténation de chaînes
+pour créer la requête (par exemple l'oubli d'un espace) ou dans les
+chaînes concaténées causer une erreur <em>à l'exécution</em>,
+</li>
+<li>ne permet pas une bonne maintenabilité: en effet, quand le schéma
+de la base de données est modifié, il faut vérifier que chaque requête
+est encore correcte par rapport au schéma.
+</li>
+</ul>
+<p>Pour résoudre ces problèmes, nous voulons</p>
+<ul><li>générer automatiquement les fonctions qui exécutent les requêtes de base
+sur chaque table,
+</li>
+<li>permettre à l'utilisateur la définition de requêtes complexes, en
+langage SQL; les fonctions OCaml exécutant ces requêtes étant automatiquement
+générées, nous voulons garantir <em> à la compilation </em>que l'exécution
+de ces requêtes n'échouera (par exemple à cause d'erreurs
+de syntaxe ou encore par référencement de colonne non existente dans une table),
+</li>
+<li>vérifier automatiquement et invalider des requêtes quand le schéma de la
+base est modifié.
+</li>
+</ul>
+<p>Pour faire tout cela, nous avons besoin des informations suivantes à propos
+de chaque colonne de chaque table:
+</p>
+<ul>
+<li>son nom,</li>
+<li>la définition de son type selon la base de données cible,</li>
+<li>des attributs indiquant par exemple si la colonne peut être NULL,
+si c'est une clé,</li>
+<li>son type OCaml dans le code source que nous voulons générer,</li>
+<li>les fonctions à utiliser pour traduire les valeurs de la base de
+données vers des valeurs OCaml et réciproquement.</li>
+</ul>
+<p>La liste des tables avec les informations ci-dessus pour chaque colonne
+est ce que nous appelons le schéma de base de données.
+</p>
+<p>L'outil DBForge permet de définir un tel schéma dans une interface
+graphique et de générer le code OCaml correspondant. L'utilisateur peut également
+définir des requêtes SQL pour qu'elles soient encapsulées dans des fonctions OCaml
+dans le code généré. Pour l'instant, seules les requêtes de
+type &quot;select&quot; et &quot;union&quot; sont supportées.
+</p>
+<h3>Exemple</h3>
+<p>La distribution contient un exemple dans le répertoire <code>src/dbforge/example</code>.
+On y trouve plusieurs fichiers.
+</p>
+<p><code>Makefile</code> est le fichier pour compiler avec
+<code>make</code>.
+</p>
+<p><code>base.xml</code> est le fichier contenant le schéma. Il peut être édité par l'éditeur graphique
+lancé avec la commande suivante:
+</p>
+<div class="code"><pre>dbforge2.gui.{x,byte} base.xml</pre></div>
+<p>Le code OCaml est généré à partir de ce fichier par la commande suivante:
+</p>
+<div class="code"><pre>dbforge2.{x,byte} -o base.ml base.xml</pre></div>
+<p>Le fichier <code>base.ml</code> contient alors le code OCaml généré. Ce dernier utilise deux modules
+installés en même temps que Cameleon2: Dbf_sql_driver et Dbf_sql_misc.
+On peut obtenir le fichier d'interface avec la commande suivante:
+</p>
+<div class="code"><pre>ocamlc -I +cameleon2 -i base.ml &gt; base.mli</pre></div>
+<p>Le code généré est composé de foncteurs, un par table et un pour les requêtes
+additionnelles. Ces foncteurs prennent tous en paramètre un module du type
+Dbf_sql_driver.SqlDriver, qui permet d'abstraire le système de gestion de base de
+données utilisé en utilisant des modules partageant la même interface.
+</p>
+<p><code>example.ml</code> est le fichier principal de l'exemple. Il utilise le module Dbf_mysql
+dont le source est installé en même temps que Cameleon2. Comme il nécessite
+que la bibliothèque OCaml-Mysql soit installée, il n'est pas compilé à l'installation
+mais doit être compilé par l'application qui souhaite s'en servir.
+Ce module est du type Dbf_sql_driver.SqlDriver et peut donc être passé en paramètre
+aux foncteurs générés dans le fichier
+<code>base.ml</code>.
+ Les modules obtenus fournissent les fonctions d'accès à la base de données.
+</p>
+
+<h3>Téléchargement</h3>
+<p>
+DBForge is <a href="https://github.com/zoggy/dbforge">hosted on Github</a>.
+</p>
+<h4>Releases</h4>
+<ul>
+<li><a href="dbforge-2.0.tar.gz">1.0</a> [2012-04-12]:
+first release after extraction from Cameleon.</li>
+</ul>
+
+<h3>Installation</h3>
+<p>
+DBForge nécessite l'installation de
+</p>
+<ul>
+<li>href="http://lablgtk.forge.ocamlcore.org/">LablGtk</a> &gt;= 2.14.1, installé avec ocamlfind,</li>
+</ul>
+<p>To compile and install:
+</p>
+<ul>
+<li><span class="code">tar xvfz dforge-XXX.tar.gz</span></li>
+<li><span class="code">cd dbforge-XXX</span></li>
+<li><span class="code">make all install</span></li>
+</ul>
+
+<h3>License</h3>
+<p>
+DBForge is released under the <a href="http://www.gnu.org/licenses/gpl.html">LGPL v3</a>.
+</p>
+
+<h3>Auteur et contact</h3>
+<p>
+Maxence Guesdon <code>&lt;Maxence 'DOT' Guesdon 'AT' inria 'DOT' fr&gt;</code>
+avec Pierre-Yves Strub et Nadji Gauthier.
+</p>
+</div>
+-->
+</div>
+</div>
+</div>
+</body>
+</html>

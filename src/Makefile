@@ -24,7 +24,7 @@
 
 include ../master.Makefile
 
-PACKAGES=str,config-file
+PACKAGES=str,config-file,xmlm
 GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)
@@ -237,7 +237,7 @@ install: all
 		$(LIB_SQL) $(LIB_SQL:.cmxa=.a) $(LIB_SQL_CMIFILES) \
 		$(LIB_MYSQL) $(LIB_MYSQL:.cmxa=.cmi) $(LIB_MYSQL:.cmxa=.a) $(LIB_MYSQL:.cmxa=.mli) \
 		$(LIB_DBF_GTK) $(LIB_DBF_GTK:.cmxa=.a) $(LIB_DBF_GTK:.cmxa=.mli) $(LIB_DBF_GTK_CMIFILES) \
-		$(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE)
+		$(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) $(LIB_SQL_BYTE) $(LIB_MYSQL_BYTE)
 	$(CP) $(DBFORGE) $(DBFORGE_BYTE) $(OCAMLBIN)
 	$(CP) $(DBFORGE_GTK) $(DFBORGE_GTK_BYTE) $(OCAMLBIN)
 	$(OCAMLFIND) install sqml sqml/META \

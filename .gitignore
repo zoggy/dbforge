@@ -23,3 +23,6 @@ src/sqml/sqml_parser.ml
 src/sqml/sqml_parser.output
 src/tmpl/tmplParser.ml
 src/tmpl/tmplParser.output
+src/example/base.ml
+src/example/example.byte
+

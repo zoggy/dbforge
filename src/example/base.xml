@@ -1,0 +1,80 @@
+<db>
+  <tables>
+    <table logged="true">
+      <name>people</name>
+      <comment></comment>
+      <columns>
+        <column nullable="false">
+          <name>name</name>
+          <comment></comment>
+          <type>
+            <name>VARCHAR</name>
+            <dispsize>40</dispsize>
+          </type>
+          <ocaml_type>string</ocaml_type>
+          <sql2ml>Sql.sql2str</sql2ml>
+          <ml2sql>Sql.str2sql</ml2sql>
+        </column>
+        <column nullable="true">
+          <name>text</name>
+          <comment></comment>
+          <type>
+            <name>TEXT</name>
+          </type>
+          <ocaml_type>string</ocaml_type>
+          <sql2ml>Sql.sql2str</sql2ml>
+          <ml2sql>Sql.str2sql</ml2sql>
+        </column>
+        <column nullable="false">
+          <name>id</name>
+          <comment></comment>
+          <type>
+            <name>INT</name>
+            <options></options>
+          </type>
+          <ocaml_type>int</ocaml_type>
+          <sql2ml>Sql.sql2int</sql2ml>
+          <ml2sql>Sql.int2sql</ml2sql>
+          <spec_options db="MySQL">
+            <spec_option>auto_increment</spec_option>
+          </spec_options>
+        </column>
+      </columns>
+      <pkey>
+        <columnref>id</columnref>
+      </pkey>
+    </table>
+    <table logged="false">
+      <name>table_not_logged</name>
+      <comment></comment>
+      <columns>
+        <column nullable="true">
+          <name>id</name>
+          <comment></comment>
+          <type>
+            <name>INT</name>
+            <options></options>
+          </type>
+          <ocaml_type>int</ocaml_type>
+          <sql2ml>Sql.sql2int</sql2ml>
+          <ml2sql>Sql.int2sql</ml2sql>
+        </column>
+      </columns>
+    </table>
+  </tables>
+  <vtables/>
+  <indexes/>
+  <queries>
+    <query>
+      <name>get_with_name_like</name>
+      <querytext>select name, people.id from people
+where name like :name:people.name;</querytext>
+      <comment>hello</comment>
+    </query>
+    <query>
+      <name>query_1</name>
+      <querytext>select name,id from people where name like :name and name = &apos;&quot;coucou&apos;;</querytext>
+      <comment></comment>
+    </query>
+  </queries>
+</db>

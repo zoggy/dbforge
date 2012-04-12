@@ -28,7 +28,7 @@ PACKAGES=str,config-file,xmlm
 GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)
-INCLUDES=-I sqml -I dbf
+INCLUDES=-I sqml -I dbf -I tmpl-engine
 
 COMPFLAGS=$(INCLUDES) -annot
 LINKFLAGS=$(INCLUDES)
@@ -61,7 +61,7 @@ TMPL_BYTE=$(TMPL).byte
 # Compilation
 #############
 
-DBFORGE_COMMON_CMOFILES= \
+LIB_DBF_CMOFILES= \
 	dbf/dbf_installation.cmo \
 	dbf/dbf_misc.cmo \
 	dbf/dbf_sql.cmo \
@@ -70,8 +70,8 @@ DBFORGE_COMMON_CMOFILES= \
 	dbf/dbf_sql_qgen.cmo \
 	dbf/dbf_sql_io.cmo
 
-DBFORGE_COMMON_CMIFILES= $(DBFORGE_COMMON_CMOFILES:.cmo=.cmi)
-DBFORGE_COMMON_CMXFILES= $(DBFORGE_COMMON_CMOFILES:.cmo=.cmx)
+LIB_DBF_CMIFILES= $(LIB_DBF_CMOFILES:.cmo=.cmi)
+LIB_DBF_COMMON_CMXFILES= $(LIB_DBF_CMOFILES:.cmo=.cmx)
 
 DBFORGE_COMMON_GTK_CMOFILES= \
 	dbf/dbf_gtk2Misc.cmo \
@@ -84,7 +84,7 @@ DBFORGE_COMMON_GTK_CMOFILES= \
 	dbf/dbf_virtualTable.cmo \
 	dbf/dbf_table.cmo \
 	dbf/dbf_query.cmo \
-	dbf/dbf_gui.cmo
+	dbf/dbf_gtk.cmo
 
 DBFORGE_CMOFILES= dbf/dbf_main.cmo
 DBFORGE_CMXFILES= $(DBFORGE_CMOFILES:.cmo=.cmx)
@@ -94,7 +94,7 @@ DBFORGE_GTK_CMOFILES=	dbf/dbf_main_gtk.cmo
 DBFORGE_GTK_CMXFILES= $(DBFORGE_GTK_CMOFILES:.cmo=.cmx)
 DBFORGE_GTK_CMIFILES= $(DBFORGE_GTK_CMOFILES:.cmo=.cmi)
 
-LIB_DBF_GTK_CMOFILES=	dbf/dbforge_gtk.cmo
+LIB_DBF_GTK_CMOFILES=	$(DBFORGE_COMMON_GTK_CMOFILES) dbf/dbforge_gtk.cmo
 LIB_DBF_GTK_CMXFILES=$(LIB_DBF_GTK_CMOFILES:.cmo=.cmx)
 LIB_DBF_GTK_CMIFILES=$(LIB_DBF_GTK_CMOFILES:.cmo=.cmi)
 
@@ -121,6 +121,18 @@ SQML_CMOFILES=\
 
 SQML_CMXFILES= $(SQML_CMOFILES:.cmo=.cmx)
 SQML_CMIFILES= $(SQML_CMOFILES:.cmo=.cmi)
+
+
+TMPL_COMMON_CMOFILES=\
+	tmpl-engine/template.cmo \
+	tmpl-engine/tmplParser.cmo \
+	tmpl-engine/tmplLexer.cmo \
+	tmpl-engine/tmplIO.cmo
+
+TMPL_CMOFILES=$(TMPL_COMMON_CMOFILES) \
+	tmpl-engine/main.cmo
+TMPL_CMXFILES= $(TMPL_CMOFILES:.cmo=.cmx)
+TMPL_CMIFILES= $(TMPL_CMOFILES:.cmo=.cmi)
 
 all: opt byte
 opt: $(TMPL) $(LIB_SQML) $(DBF_LIBS) $(DBFORGE) $(DBFORGE_GTK)
@@ -155,7 +167,8 @@ $(DBFORGE_GTK_BYTE): $(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) \
 	$(OCAMLFIND) ocamlc -package $(ALL_PACKAGES) -linkpkg -o $@ $(LINKFLAGS) \
 	$(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) $(DBFORGE_GTK_CMOFILES)
 
-$(TMPL):
+$(TMPL): $(TMPL_CMIFILES) $(TMPL_CMXFILES)
+	$(OCAMLFIND) ocamlopt -package str -linkpkg -o $@ $(LINKFLAGS) $(TMPL_CMXFILES)
 
 $(LIB_SQML): $(SQML_CMIFILES) $(SQML_CMXFILES)
 	$(OCAMLFIND) ocamlopt -a -o $@ $(LINKFLAGS) $(SQML_CMXFILES)
@@ -244,3 +257,11 @@ uninstall: dummy
 ###########################
 # additional dependencies
 ###########################
+dbf/dbf_sql_gen.ml: dbf/sql_table.tmpl.ml $(TMPL_BYTE)
+	$(ROOT)/src/$(TMPL_BYTE) $< > $@
+
+dbf/dbf_sql_vgen.ml: dbf/sql_vtable.tmpl.ml $(TMPL_BYTE)
+	$(ROOT)/src/$(TMPL_BYTE) $< > $@
+
+dbf/dbf_sql_qgen.ml: dbf/sql_query.tmpl.ml $(TMPL_BYTE)
+	$(ROOT)/src/$(TMPL_BYTE) $< > $@

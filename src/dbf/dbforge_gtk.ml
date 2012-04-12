@@ -24,7 +24,7 @@
 (*********************************************************************************)
 
 class dbforge_app file =
-  let gui = new Dbf_gui.gui () in
+  let gui = new Dbf_gtk.gui () in
   let _ = gui#open_file file in
 
   object (self)

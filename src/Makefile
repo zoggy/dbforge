@@ -28,7 +28,7 @@ PACKAGES=str,config-file,xmlm
 GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)
-INCLUDES=-I sqml -I dbf -I tmpl-engine
+INCLUDES=-I sqml -I dbf -I tmpl
 
 COMPFLAGS=$(INCLUDES) -annot
 LINKFLAGS=$(INCLUDES)
@@ -124,13 +124,13 @@ SQML_CMIFILES= $(SQML_CMOFILES:.cmo=.cmi)
 
 
 TMPL_COMMON_CMOFILES=\
-	tmpl-engine/template.cmo \
-	tmpl-engine/tmplParser.cmo \
-	tmpl-engine/tmplLexer.cmo \
-	tmpl-engine/tmplIO.cmo
+	tmpl/template.cmo \
+	tmpl/tmplParser.cmo \
+	tmpl/tmplLexer.cmo \
+	tmpl/tmplIO.cmo
 
 TMPL_CMOFILES=$(TMPL_COMMON_CMOFILES) \
-	tmpl-engine/main.cmo
+	tmpl/main.cmo
 TMPL_CMXFILES= $(TMPL_CMOFILES:.cmo=.cmx)
 TMPL_CMIFILES= $(TMPL_CMOFILES:.cmo=.cmi)
 
@@ -169,6 +169,9 @@ $(DBFORGE_GTK_BYTE): $(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) \
 
 $(TMPL): $(TMPL_CMIFILES) $(TMPL_CMXFILES)
 	$(OCAMLFIND) ocamlopt -package str -linkpkg -o $@ $(LINKFLAGS) $(TMPL_CMXFILES)
+
+$(TMPL_BYTE): $(TMPL_CMIFILES) $(TMPL_CMOFILES)
+	$(OCAMLFIND) ocamlc -package str -linkpkg -o $@ $(LINKFLAGS) $(TMPL_CMOFILES)
 
 $(LIB_SQML): $(SQML_CMIFILES) $(SQML_CMXFILES)
 	$(OCAMLFIND) ocamlopt -a -o $@ $(LINKFLAGS) $(SQML_CMXFILES)
@@ -222,17 +225,18 @@ dep.ps:dep.dot
 ############################
 
 distclean: clean
-	$(RM) config.ml
 
 clean:: dummy
 	$(RM) *~ \#*\#
-	$(RM) $(EXE) $(EXE_BYTE) $(EXE_GTK) $(EXE_GTK_BYTE)
-	$(RM) cgtest cgtest.ml-test
-	$(RM) *.cm* *.a *.o *.annot *.odoc *.dot *.ps
+	$(RM) $(DBFORGE) $(DBFORGE_BYTE) $(DBFORGE_GTK) $(DBFORGE_GTK_BYTE)
+	$(RM) $(TMPL) $(TMPL_BYTE)
+	(cd dbf && $(RM) *.cm* *.a *.o *.annot)
+	(cd sqml && $(RM) *.cm* *.a *.o *.annot)
+	(cd tmpl && $(RM) *.cm* *.a *.o *.annot)
 
 .depend depend:
 	$(RM) .depend
-	$(OCAMLDEP) *.ml *.mli > .depend
+	$(OCAMLDEP) dbf/*.ml dbf/*.mli sqml/*.ml sqml/*.mli tmpl/*.ml tmpl/*.mli > .depend
 
 dummy:
 
@@ -257,11 +261,14 @@ uninstall: dummy
 ###########################
 # additional dependencies
 ###########################
-dbf/dbf_sql_gen.ml: dbf/sql_table.tmpl.ml $(TMPL_BYTE)
+dbf/dbf_sql_gen.ml: dbf/sql_table.ml.tmpl $(TMPL_BYTE)
 	$(ROOT)/src/$(TMPL_BYTE) $< > $@
 
-dbf/dbf_sql_vgen.ml: dbf/sql_vtable.tmpl.ml $(TMPL_BYTE)
+dbf/dbf_sql_vgen.ml: dbf/sql_vtable.ml.tmpl $(TMPL_BYTE)
 	$(ROOT)/src/$(TMPL_BYTE) $< > $@
 
-dbf/dbf_sql_qgen.ml: dbf/sql_query.tmpl.ml $(TMPL_BYTE)
+dbf/dbf_sql_qgen.ml: dbf/sql_query.ml.tmpl $(TMPL_BYTE)
 	$(ROOT)/src/$(TMPL_BYTE) $< > $@
+
+dbf/dbf_gladeWidgets.ml: dbf/dbforge.glade
+	$(LABLGLADECC) -hide-default $< > $@

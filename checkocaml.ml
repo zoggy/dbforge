@@ -898,7 +898,17 @@ let _ = check_ocamlfind_package conf "mysql";;
 let _ = check_ocamlfind_package conf "lablgtk2";;
 let _ = check_ocamlfind_package conf "lablgtk2.glade";;
 let _ = check_ocamlfind_package conf "lablgtk2-extras.configwin";;
-
+let _ =
+  let lablgladecc =
+    try ocaml_prog "lablgladecc2"
+    with Program_not_found _ ->
+      try ocaml_prog "lablgladecc"
+      with Program_not_found _ ->
+        prerr_endline "Cannot find lablgladecc2 or lablgladecc";
+        exit 1
+  in
+  add_subst "LABLGLADECC" lablgladecc
+;;
 let _ = !print "\n###\n"
 
 let _ = add_conf_variables conf

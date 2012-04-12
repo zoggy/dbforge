@@ -1,0 +1,52 @@
+<!ELEMENT db      (tables,vtables,indexes,queries)>
+
+<!-- Tables -->
+
+<!ELEMENT tables  (table*)>
+<!ELEMENT table   (name,comment,columns,pkey?)>
+<!ATTLIST table   logged (true|false) #REQUIRED>
+
+<!ELEMENT columns (column*)>
+<!ELEMENT column  (name,comment,type,ocaml_type,sql2ml,ml2sql,spec_options*)>
+<!ATTLIST column  nullable (true|false) #REQUIRED>
+
+<!ELEMENT pkey    (columnref+)>
+
+<!ELEMENT type         (name,dispsize?,precision?,options?,spec_ty*)>
+<!ELEMENT dispsize     (#PCDATA)>
+<!ELEMENT precision    (#PCDATA)>
+<!ELEMENT options      (#PCDATA)>
+
+<!ELEMENT spec_ty      (#PCDATA)>
+<!ATTLIST spec_ty      db CDATA #REQUIRED>
+
+<!ELEMENT name         (#PCDATA)>
+<!ELEMENT comment      (#PCDATA)>
+<!ELEMENT ocaml_type   (#PCDATA)>
+<!ELEMENT sql2ml       (#PCDATA)>
+<!ELEMENT ml2sql       (#PCDATA)>
+
+<!ELEMENT spec_options (spec_option+)>
+<!ATTLIST spec_options db CDATA #REQUIRED>
+<!ELEMENT spec_option  (#PCDATA)>
+
+<!ELEMENT tableref      (#PCDATA)>
+<!ELEMENT columnref     (#PCDATA)>
+<!ELEMENT columnfullref (tableref,columnref)>
+
+<!-- Virtual tables -->
+
+<!ELEMENT vtables  (vtable*)>
+<!ELEMENT vtable   (name,tableref,join*)>
+<!ELEMENT join     (tableref,columneq*)>
+<!ELEMENT columneq (columnfullref,columnref)>
+
+<!-- Indexes -->
+<!ELEMENT indexes (index*)>
+<!ELEMENT index   (name,tableref,columnref+)>
+<!ATTLIST index   unique (true|false) #REQUIRED>
+
+<!-- Queries -->
+<!ELEMENT queries (query*)>
+<!ELEMENT query   (name,querytext,comment)>
+<!ELEMENT querytext (#PCDATA)>

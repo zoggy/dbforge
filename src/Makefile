@@ -190,42 +190,16 @@ $(LIB_SQML): $(SQML_CMIFILES) $(SQML_CMXFILES)
 $(LIB_SQML_BYTE): $(SQML_CMIFILES) $(SQML_CMOFILES)
 	$(OCAMLFIND) ocamlc -a -custom -o $@ $(LINKFLAGS_BYTE) $(SQML_CMOFILES)
 
-# Test :
-########
-
-test: dummy $(ODOC)
-	$(MKDIR) test
-	$(OCAMLFIND) ocamlc $(OF_FLAGS) -c test.mli
-	$(OCAMLFIND) ocamlc $(OF_FLAGS) -c test.ml
-	ocamldoc -v -keep-code -o test/test.cga -I +ocamldoc \
-	-hide Cgtypes -prefix "Zoggy." \
-	test.mli test.ml -g $(ODOC)
-
 # Documentation :
 #################
-dump.odoc: *.mli *.ml
-	$(OCAMLFIND) ocamldoc $(OF_FLAGS) $(OCAMLPP) $(INCLUDES) -rectypes -sort -dump dump.odoc \
-	`ls $^ | grep -v cam_camlget`
+dump.odoc: */*.mli */*.ml
+	$(OCAMLFIND) ocamldoc $(OF_FLAGS) -package mysql $(OCAMLPP) $(INCLUDES) -sort -dump dump.odoc $^
 
 doc: dump.odoc
 	$(MKDIR) ocamldoc
 	$(OCAMLFIND) ocamldoc $(OF_FLAGS) $(OCAMLPP) \
 	-load $^ \
 	-d ocamldoc -html
-
-doc2: dump.odoc
-	$(MKDIR) ocamldoc
-	$(OCAMLFIND) ocamldoc $(OF_FLAGS) $(OCAMLPP) \
-	-load $^ \
-	-d ocamldoc -g $(ODOC_HTML_BYTE)
-	$(CP) ../images/camlget.png ocamldoc/
-
-cgtest: dump.odoc dummy
-	$(MKDIR) ocamldoc
-	$(OCAMLFIND) ocamldoc $(OCAMLPP) -load $< \
-	-d ocamldoc -g $(ODOC_TEST_BYTE) -o cgtest.ml-test
-	$(OCAMLFIND) ocamlc -package $(PACKAGES) -linkpkg -o $@ $(COMPFLAGS) $(LIBS_BYTE) \
-	$(LIB_BYTE) -impl cgtest.ml-test
 
 dot: dep.dot
 dep.dot: dump.odoc
@@ -258,17 +232,28 @@ include .depend
 # Installation
 #################
 install: all
-	$(OCAMLFIND) install $(PACKAGE) ../META \
-		$(LIB) $(LIB:.cmxa=.cmi) $(LIB:.cmxa=.a) $(LIB:.cmxa=.mli) \
-		$(LIB_GTK) $(LIB_GTK:.cmxa=.cmi) $(LIB_GTK:.cmxa=.a) $(LIB_GTK:.cmxa=.mli) \
-		$(LIB_BYTE) $(LIB_GTK_BYTE)
-	$(CP) $(EXE) $(EXE_BYTE) $(OCAMLBIN)
-	$(CP) $(EXE_GTK) $(EXE_GTK_BYTE) $(OCAMLBIN)
-	$(CP) $(ODOC_HTML) $(ODOC_TEST) $(ODOC) `$(OCAMLDOC) -customdir `
-	$(CP) $(ODOC_HTML_BYTE) $(ODOC_TEST_BYTE) $(ODOC_BYTE) `$(OCAMLDOC) -customdir `
+	$(OCAMLFIND) install $(PACKAGE) dbf/META \
+		$(LIB_DBF) $(LIB_DBF:.cmxa=.a) $(LIB_DBF_CMIFILES) \
+		$(LIB_SQL) $(LIB_SQL:.cmxa=.a) $(LIB_SQL_CMIFILES) \
+		$(LIB_MYSQL) $(LIB_MYSQL:.cmxa=.cmi) $(LIB_MYSQL:.cmxa=.a) $(LIB_MYSQL:.cmxa=.mli) \
+		$(LIB_DBF_GTK) $(LIB_DBF_GTK:.cmxa=.a) $(LIB_DBF_GTK:.cmxa=.mli) $(LIB_DBF_GTK_CMIFILES) \
+		$(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE)
+	$(CP) $(DBFORGE) $(DBFORGE_BYTE) $(OCAMLBIN)
+	$(CP) $(DBFORGE_GTK) $(DFBORGE_GTK_BYTE) $(OCAMLBIN)
+	$(OCAMLFIND) install sqml sqml/META \
+		$(LIB_SQML) $(LIB_SQML:.cmxa=.cmi) $(LIB_SQML:.cmxa=.a) $(LIB_SQML_CMIFILES) \
+		$(LIB_SQML_BYTE)
+	$(MKDIR) $(DTDDIR) $(GLADEDIR)
+	$(CP) dbf/db.dtd $(DTDDIR)/
+	$(CP) dbf/dbforge.glade $(GLADEDIR)/
 
 uninstall: dummy
 	$(OCAMLFIND) remove $(PACKAGE)
+	$(OCAMLFIND) remove sqml
+	$(RM) $(OCAMLBIN)/$(DBFORGE)
+	$(RM) $(OCAMLBIN)/$(DBFORGE_GTK)
+	$(RM) $(OCAMLBIN)/$(DBFORGE_BYTE)
+	$(RM) $(OCAMLBIN)/$(DBFORGE_GTK_BYTE)
 
 ###########################
 # additional dependencies

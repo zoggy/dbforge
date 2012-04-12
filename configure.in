@@ -25,7 +25,7 @@
 # check for one particular file of the sources
 AC_INIT(master.Makefile.in)
 
-VERSION=1.0
+VERSION=2.0
 PACKAGE=dbforge
 
 # The root directory where we will compile
@@ -33,6 +33,20 @@ ROOT=`pwd`
 
 ocaml unix.cma str.cma checkocaml.ml ocaml_config.sh || exit 1
 . ./ocaml_config.sh
+
+if test "$prefix" = "NONE" ; then
+  prefix=`dirname $OCAMLBIN`
+fi
+
+if test "$datadir" = "\${datarootdir}" ; then
+        datadir=${prefix}/share
+fi
+if test "$datadir" = "\${prefix}/share" ; then
+        datadir=$prefix/share
+fi
+
+GLADEDIR=$datadir/glade
+DTDDIR=$datadir/dtds
 
 ##########################
 # debugging
@@ -62,6 +76,8 @@ AC_SUBST(OCAMLFIND)
 AC_SUBST(LABLGLADECC)
 AC_SUBST(EXEC_PREFIX)
 AC_SUBST(ROOT)
+AC_SUBST(DTDDIR)
+AC_SUBST(GLADEDIR)
 AC_SUBST(XMLLIGHT_INCLUDES)
 AC_SUBST(DEBUG_LEVEL)
 AC_SUBST(VERSION)
@@ -75,3 +91,11 @@ chmod a-w src/dbf/META
 chmod a-w src/sqml/META
 chmod a-w src/dbf/dbf_installation.ml
 
+cat << EOF
+====
+The following packages will be installed with findlib:
+  $PACKAGE, $PACKAGE.sql $PACKAGE.mysql, $PACKAGE.gtk, sqml
+
+DTD file will be installed in $DTDDIR
+Glade file will be installed in $GLADEDIR
+EOF

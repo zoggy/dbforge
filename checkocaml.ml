@@ -880,6 +880,37 @@ let add_conf_variables c =
 
 (*/c==m=[OCaml_conf]=0.7=t==*)
 
+(*c==v=[OCaml_conf.detect_xml_light]=0.3====*)
+let detect_xml_light ?(modes=[`Byte;`Opt]) conf =
+  let includes =
+     ["default install", [] ;
+      "+xml-light style", [Filename.concat (ocaml_libdir conf) "xml-light"] ;
+     ]
+  in
+  let includes =
+    match ocamlfind_query conf "xml-light" with
+      None -> includes
+    | Some s -> ("with ocamlfind", [s]) :: includes
+  in
+  let libs = ["xml-light.cma"] in
+  let f (mes, includes) mode =
+    let mes = Printf.sprintf "checking for Xml-light (%s) %s... "
+      (string_of_mode mode) mes
+    in
+    can_link ~mes mode conf ~includes ~libs []
+  in
+  let rec iter = function
+    [] -> ([], [])
+  | incs :: q ->
+      let f = f incs in
+      if List.for_all f modes then
+        (snd incs, libs)
+      else
+        iter q
+  in
+  iter includes
+(*/c==v=[OCaml_conf.detect_xml_light]=0.3====*)
+
 let ocaml_required = [3;9;0]
 let conf = ocaml_conf ();;
 print_conf conf;;
@@ -898,6 +929,15 @@ let _ = check_ocamlfind_package conf "mysql";;
 let _ = check_ocamlfind_package conf "lablgtk2";;
 let _ = check_ocamlfind_package conf "lablgtk2.glade";;
 let _ = check_ocamlfind_package conf "lablgtk2-extras.configwin";;
+let _ =
+  begin
+    match detect_xml_light conf with
+      [], [] -> !fatal_error "Xml-light not detected"
+    | incs, _ ->
+        add_subst "XMLLIGHT_INCLUDES" (string_of_includes incs)
+  end
+;;
+
 let _ =
   let lablgladecc =
     try ocaml_prog "lablgladecc2"

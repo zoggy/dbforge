@@ -26,7 +26,7 @@
 open Dbf_sql.SQL_db
 open Dbf_sql
 
-type mode = Gencode | Convert of Dbf_old.dbms
+type mode = Gencode
 
 let indexes_of_table = fun t ->
   List.filter (fun i -> (table_of_index i) == t)
@@ -60,18 +60,6 @@ let mode = ref Gencode
 (** Will remove the given prefix from table names to get the module names.*)
 let remove_table_prefix = ref None
 
-let conversions =
-  [ "mysql", Dbf_old.Mysql ;
-    "postgres", Dbf_old.Postgres ;
-    "odbc", Dbf_old.Odbc ;
-  ]
-let convert_options = List.map
-    (fun (s,t) ->
-      Printf.sprintf "--conv-%s" s, Arg.Unit (fun () -> mode := Convert t),
-      Printf.sprintf "\tconvert Cameleon1-DBForge file to new format using %s information" s;
-    )
-    conversions
-
 let options = [
   "--version",
   Arg.Unit (fun () -> print_endline Dbf_installation.software_version; exit 0),
@@ -82,11 +70,7 @@ let options = [
 
   "--remove-table-prefix", Arg.String (fun s -> remove_table_prefix := Some s),
   "<prefix>\n\t\tremove this prefix from table names to get (simpler) module names" ;
-] @ convert_options
-
-let convert_from_old file t =
-  let old = Dbf_old.read file in
-  Dbf_old.convert_to_db old t
+]
 
 let main () =
   Arg.parse options
@@ -140,31 +124,28 @@ let main () =
 
         List.iter
         (fun table ->
-          let idxes = indexes_of_table table db.db_indexes in
-          let module_name =
-            match !remove_table_prefix with
-              None -> String.capitalize table.ta_name
-            | Some s ->
-                String.capitalize
+           let idxes = indexes_of_table table db.db_indexes in
+           let module_name =
+             match !remove_table_prefix with
+               None -> String.capitalize table.ta_name
+             | Some s ->
+                 String.capitalize
                   (remove_prefix s table.ta_name)
-          in
-          Dbf_sql_gen.print (table, module_name, idxes) out)
+           in
+           Dbf_sql_gen.print (table, module_name, idxes) out)
         db.db_tables;
-      List.iter
+        List.iter
         (fun vtable ->
-          let idxes = indexes_of_vtable vtable db.db_indexes in
-          Dbf_sql_vgen.print (vtable, idxes) out)
-          db.db_vtables;
-	Printf.fprintf out
-	  "\nmodule Queries = functor (Sql : Dbf_sql_driver.SqlDriver) -> struct\n";
-	List.iter
+           let idxes = indexes_of_vtable vtable db.db_indexes in
+           Dbf_sql_vgen.print (vtable, idxes) out)
+        db.db_vtables;
+        Printf.fprintf out
+        "\nmodule Queries = functor (Sql : Dbf_sql_driver.SqlDriver) -> struct\n";
+        List.iter
         (fun query ->
-          Dbf_sql_qgen.print query out)
-          db.db_queries;
-	Printf.fprintf out "end\n"
-    | Convert t ->
-        let db = convert_from_old in_file t in
-        output_string out (Xml.to_string_fmt (Dbf_sql_io.xml_of_db db))
+           Dbf_sql_qgen.print query out)
+        db.db_queries;
+        Printf.fprintf out "end\n"
   end;
   close_out out
 

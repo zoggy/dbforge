@@ -56,6 +56,7 @@ DESTDIR=   # For debian packagers
 
 # Compilation
 #############
+XMLLIGHT_INCLUDES=@XMLLIGHT_INCLUDES@
 
 ROOT=@ROOT@
 VERSION=@VERSION@

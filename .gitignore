@@ -2,6 +2,7 @@
 META
 config.log
 config.status
+config_check.log
 autom4te.cache
 ocaml_config.sh
 master.Makefile
@@ -9,7 +10,16 @@ master.Makefile
 *.a
 *.o
 *.annot
-src/dforge*
+src/dbforge*
 src/dbf/dbf_installation.ml
 src/ocamldoc
 src/dump.odoc
+src/tmpl-engine*
+src/dbf/dbf_sql_gen.ml
+src/dbf/dbf_sql_qgen.ml
+src/dbf/dbf_sql_vgen.ml
+src/dbf/dbf_gladeWidgets.ml
+src/sqml/sqml_parser.ml
+src/sqml/sqml_parser.output
+src/tmpl/tmplParser.ml
+src/tmpl/tmplParser.output

@@ -44,7 +44,7 @@ let _ =
   ignore(GMain.Main.init ());
   Glade.init ();
 
-  let gui = new Dbf_gui.gui () in
+  let gui = new Dbf_gtk.gui () in
   (
    match !file with
      None -> ()

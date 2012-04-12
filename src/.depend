@@ -1,0 +1,68 @@
+dbf/dbf_columnGUI.cmo :
+dbf/dbf_columnGUI.cmx :
+dbf/dbf_dbStores.cmo :
+dbf/dbf_dbStores.cmx :
+dbf/dbf_dbWidget.cmo :
+dbf/dbf_dbWidget.cmx :
+dbf/dbf_gtk.cmo :
+dbf/dbf_gtk.cmx :
+dbf/dbf_gtk2Misc.cmo :
+dbf/dbf_gtk2Misc.cmx :
+dbf/dbf_indexGUI.cmo :
+dbf/dbf_indexGUI.cmx :
+dbf/dbf_installation.cmo : dbf/dbf_installation.cmi
+dbf/dbf_installation.cmx : dbf/dbf_installation.cmi
+dbf/dbf_main.cmo :
+dbf/dbf_main.cmx :
+dbf/dbf_main_gtk.cmo :
+dbf/dbf_main_gtk.cmx :
+dbf/dbf_misc.cmo :
+dbf/dbf_misc.cmx :
+dbf/dbf_mysql.cmo : dbf/dbf_mysql.cmi
+dbf/dbf_mysql.cmx : dbf/dbf_mysql.cmi
+dbf/dbf_old.cmo :
+dbf/dbf_old.cmx :
+dbf/dbf_queryGUI.cmo :
+dbf/dbf_queryGUI.cmx :
+dbf/dbf_selectWidget.cmo :
+dbf/dbf_selectWidget.cmx :
+dbf/dbf_sql.cmo :
+dbf/dbf_sql.cmx :
+dbf/dbf_sql_driver.cmo :
+dbf/dbf_sql_driver.cmx :
+dbf/dbf_sql_io.cmo : dbf/dbf_sql_io.cmi
+dbf/dbf_sql_io.cmx : dbf/dbf_sql_io.cmi
+dbf/dbf_sql_misc.cmo :
+dbf/dbf_sql_misc.cmx :
+dbf/dbf_tableGUI.cmo :
+dbf/dbf_tableGUI.cmx :
+dbf/dbf_virtualTableGUI.cmo :
+dbf/dbf_virtualTableGUI.cmx :
+dbf/dbforge_gtk.cmo : dbf/dbforge_gtk.cmi
+dbf/dbforge_gtk.cmx : dbf/dbforge_gtk.cmi
+dbf/dbf_installation.cmi :
+dbf/dbf_mysql.cmi :
+dbf/dbf_sql_io.cmi :
+dbf/dbf_sqlite3.cmi :
+dbf/dbforge_gtk.cmi :
+sqml/sqml.cmo :
+sqml/sqml.cmx :
+sqml/sqml_helper_lp.cmo :
+sqml/sqml_helper_lp.cmx :
+sqml/sqml_parser.cmo :
+sqml/sqml_parser.cmx :
+sqml/sqml_pp.cmo : sqml/sqml_pp.cmi
+sqml/sqml_pp.cmx : sqml/sqml_pp.cmi
+sqml/sqml_sqlstx.cmo :
+sqml/sqml_sqlstx.cmx :
+sqml/sqml_test.cmo :
+sqml/sqml_test.cmx :
+sqml/sqml_pp.cmi :
+tmpl/main.cmo :
+tmpl/main.cmx :
+tmpl/template.cmo :
+tmpl/template.cmx :
+tmpl/tmplIO.cmo :
+tmpl/tmplIO.cmx :
+tmpl/tmplParser.cmo :
+tmpl/tmplParser.cmx :

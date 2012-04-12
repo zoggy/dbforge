@@ -193,7 +193,8 @@ $(LIB_SQML_BYTE): $(SQML_CMIFILES) $(SQML_CMOFILES)
 # Documentation :
 #################
 dump.odoc: */*.mli */*.ml
-	$(OCAMLFIND) ocamldoc $(OF_FLAGS) -package mysql $(OCAMLPP) $(INCLUDES) -sort -dump dump.odoc $^
+	$(OCAMLFIND) ocamldoc $(OF_FLAGS) -package mysql $(OCAMLPP) $(INCLUDES) -sort -dump dump.odoc \
+	`ls $^ | grep -v example`
 
 doc: dump.odoc
 	$(MKDIR) ocamldoc

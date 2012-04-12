@@ -91,11 +91,18 @@ install: dummy
 uninstall: dummy
 	cd src && $(MAKE) uninstall
 
+
+###########
+# web site
+###########
+webdoc:
+	cp web/index.html web/style.css ../dbforge-gh-pages/
+
 ###########
 # archive
 ###########
 archive:
-	git archive --prefix=dbforge-$(VERSION)/ HEAD | gzip > /tmp/dbforge-$(VERSION).tar.gz
+	git archive --prefix=dbforge-$(VERSION)/ HEAD | gzip > ../dbforge-gh-pages/dbforge-$(VERSION).tar.gz
 
 ###########################
 # additional dependencies

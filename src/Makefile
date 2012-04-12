@@ -24,115 +24,143 @@
 
 include ../master.Makefile
 
-PACKAGES=str,config-file,diff
-GTK_PACKAGES=lablgtk2-extras.configwin,diff.gtk
+PACKAGES=str,config-file,xmlm
+GTK_PACKAGES=lablgtk2-extras.configwin,lablgtk2.glade
 ALL_PACKAGES=$(PACKAGES),$(GTK_PACKAGES)
 OF_FLAGS=-package $(ALL_PACKAGES)
-INCLUDES=-I +ocamldoc
+INCLUDES=
 
-COMPFLAGS=-rectypes $(INCLUDES) -annot
+COMPFLAGS=$(INCLUDES) -annot
 LINKFLAGS=$(INCLUDES)
 
-# The executables to produce
-# PLEASE KEEP IN ALPHABETICAL ORDER
-EXE=caml-get
-EXE_BYTE=$(EXE).byte
-EXE_GTK=caml-get.gtk
-EXE_GTK_BYTE=$(EXE_GTK).byte
+# The executables and libraries to produce
+DBFORGE=dbforge
+DBFORGE_BYTE=$(DBFORGE).byte
 
-LIB=camlget.cmxa
-LIB_BYTE=camlget.cma
+DBFORGE_GTK=$(DBFORGE)-gtk
+DBFORGE_GTK_BYTE=$(DBFORGE_GTK).byte
 
-LIB_GTK=camlget_gtk.cmxa
-LIB_GTK_BYTE=$(LIB_GTK:.cmxa=.cma)
+LIB_DBF=dbforge.cmxa
+LIB_DBF_BYTE=$(LIB_DBF:.cmxa=.ma)
 
-ODOC=odoc_ar.cmxs
-ODOC_BYTE=$(ODOC:.cmxs=.cma)
-ODOC_HTML=odoc_htmlcg.cmxs
-ODOC_HTML_BYTE=$(ODOC_HTML:.cmxs=.cmo)
-ODOC_TEST=odoc_cgtest.cmxs
-ODOC_TEST_BYTE=$(ODOC_TEST:.cmxs=.cmo)
+LIB_DBF_GTK=dbforge_gtk.cmxa
+LIB_DBF_GTK_BYTE=$(LIB_DBF_GTK:.cmxa=.cma)
+
+LIB_SQL=dbf_sql.cmxa
+LIB_SQL_BYTE=$(LIB_SQL:.cmxa=.cma)
+
+LIB_MYSQL=dbf_mysql.cmxa
+LIB_MYSQL_BYTE=$(LIB_MYSQL:.cmxa=.cma)
+
+LIB_SQML=sqml.cmxa
+LIB_SQML_BYTE=$(LIB_SMQL:.cmxa=.cma)
+
+TMPL=tmpl-engine
+TMPL_BYTE=$(TMPL).byte
 
 # Compilation
 #############
 
-LIBS_BYTE=odoc_info.cma
+DBFORGE_COMMON_CMOFILES= \
+	dbf/dbf_installation.cmo \
+	dbf/dbf_misc.cmo \
+	dbf/dbf_sql.cmo \
+	dbf/dbf_sql_gen.cmo \
+	dbf/dbf_sql_vgen.cmo \
+	dbf/dbf_sql_qgen.cmo \
+	dbf/dbf_sql_io.cmo
 
-LIBS=odoc_info.cmxa
+DBFORGE_COMMON_CMIFILES= $(DBFORGE_COMMON_CMOFILES:.cmo=.cmi)
+DBFORGE_COMMON_CMXFILES= $(DBFORGE_COMMON_CMOFILES:.cmo=.cmx)
 
-LIB_CMOFILES= \
-	cgversion.cmo \
-	cgtypes.cmo \
-	server_data.cmo \
-	client_data.cmo \
-	cgmisc.cmo \
-	cgnames.cmo \
-	camlget.cmo
+DBFORGE_COMMON_GTK_CMOFILES= \
+	dbf/dbf_gtk2Misc.cmo \
+	dbf/dbf_gladeWidgets.cmo \
+	dbf/dbf_dbStores.cmo \
+	dbf/dbf_selectWidget.cmo \
+	dbf/dbf_dbWidget.cmo \
+	dbf/dbf_column.cmo \
+	dbf/dbf_index.cmo \
+	dbf/dbf_virtualTable.cmo \
+	dbf/dbf_table.cmo \
+	dbf/dbf_query.cmo \
+	dbf/dbf_gui.cmo
 
-LIB_CMXFILES= $(LIB_CMOFILES:.cmo=.cmx)
-LIB_CMIFILES= $(LIB_CMOFILES:.cmo=.cmi)
+DBFORGE_CMOFILES= dbf/dbf_main.cmo
+DBFORGE_CMXFILES= $(DBFORGE_CMOFILES:.cmo=.cmx)
+DBFORGE_CMIFILES= $(DBFORGE_CMOFILES:.cmo=.cmi)
 
-LIB_GTK_CMOFILES= camlget_gtk.cmo
-LIB_GTK_CMXFILES= $(LIB_GTK_CMOFILES:.cmo=.cmx)
-LIB_GTK_CMIFILES= $(LIB_GTK_CMOFILES:.cmo=.cmi)
+DBFORGE_GTK_CMOFILES=	dbf/dbf_main_gtk.cmo
+DBFORGE_GTK_CMXFILES= $(DBFORGE_GTK_CMOFILES:.cmo=.cmx)
+DBFORGE_GTK_CMIFILES= $(DBFORGE_GTK_CMOFILES:.cmo=.cmi)
 
-###
-EXE_CMOFILES=main.cmo
-EXE_CMXFILES= $(EXE_CMOFILES:.cmo=.cmx)
-EXE_CMIFILES= $(EXE_CMOFILES:.cmo=.cmi)
+LIB_DBF_GTK_CMOFILES=	dbf/dbforge_gtk.cmo
+LIB_DBF_GTK_CMXFILES=$(LIB_DBF_GTK_CMOFILES:.cmo=.cmx)
+LIB_DBF_GTK_CMIFILES=$(LIB_DBF_GTK_CMOFILES:.cmo=.cmi)
 
-EXE_GTK_CMOFILES=main_gtk.cmo
-EXE_GTK_CMXFILES= $(EXE_GTK_CMOFILES:.cmo=.cmx)
-EXE_GTK_CMIFILES= $(EXE_GTK_CMOFILES:.cmo=.cmi)
+LIB_SQL_CMOFILES= \
+	dbf/dbf_sql_driver.cmo \
+	dbf/dbf_sql_misc.cmo
+LIB_SQL_CMIFILES=$(LIB_SQL_CMOFILES:.cmo=.cmi)
+LIB_SQL_CMXFILES=$(LIB_SQL_CMOFILES:.cmo=.cmx)
 
-ODOC_CMOFILES=cgtypes.cmo server_data.cmo odoc_ar.cmo
+LIB_MYSQL_CMOFILES=dbf/dbf_mysql.cmo
+LIB_MYSQL_CMIFILES=$(LIB_MYSQL_CMOFILES:.cmo=.cmi)
+LIB_MYSQL_CMXFILES=$(LIB_MYSQL_CMOFILES:.cmo=.cmx)
 
-ODOC_CMXFILES= $(ODOC_CMOFILES:.cmo=.cmx)
-ODOC_CMIFILES= $(ODOC_CMOFILES:.cmo=.cmi)
+DBF_LIBS=$(LIB_DBF) $(LIB_DBF_GTK) $(LIB_SQL) $(LIB_MYSQL)
+DBF_LIBS_BYTE=$(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) $(LIB_SQL_BYTE) $(LIB_MYSQL_BYTE)
+
+SQML_CMOFILES=\
+	sqml/sqml_sqlstx.cmo \
+	sqml/sqml_helper_lp.cmo \
+	sqml/sqml_parser.cmo \
+	sqml/sqml_lexer.cmo \
+	sqml/sqml_pp.cmo \
+	sqml/sqml.cmo
+
+SQML_CMXFILES= $(SQML_CMOFILES:.cmo=.cmx)
+SQML_CMIFILES= $(SQML_CMOFILES:.cmo=.cmi)
 
 all: opt byte
-opt: $(LIB) $(EXE) $(LIB_GTK) $(EXE_GTK) $(ODOC) $(ODOC_HTML) $(ODOC_TEST)
-byte: $(LIB_BYTE) $(EXE_BYTE) $(LIB_GTK_BYTE) $(EXE_GTK_BYTE) $(ODOC_BYTE) $(ODOC_HTML_BYTE) $(ODOC_TEST_BYTE)
+opt: $(TMPL) $(LIB_SQML) $(DBF_LIBS) $(DBFORGE) $(DBFORGE_GTK)
+byte: $(TMPL_BYTE) $(LIB_SQML_BYTE) $(DBF_LIBS_BYTE) $(DBFORGE_BYTE) $(DBFORGE_GTK_BYTE)
 
-$(LIB): $(LIB_CMIFILES) $(LIB_CMXFILES)
-	$(OCAMLFIND) ocamlopt $(OF_FLAGS) -a -o $@ $(LIB_CMXFILES)
+$(LIB_DBF): $(LIB_DBF_CMIFILES) $(LIB_DBF_CMXFILES)
+	$(OCAMLFIND) ocamlopt $(OF_FLAGS) -a -o $@ $(LIB_DBF_CMXFILES)
 
-$(LIB_BYTE): $(LIB_CMIFILES) $(LIB_CMOFILES)
-	$(OCAMLFIND) ocamlc $(OF_FLAGS) -a -o $@ $(LIB_CMOFILES)
+$(LIB_DBF_BYTE): $(LIB_DBF_CMIFILES) $(LIB_DBF_CMOFILES)
+	$(OCAMLFIND) ocamlc $(OF_FLAGS) -a -o $@ $(LIB_DBF_CMOFILES)
 
-$(LIB_GTK): $(LIB_GTK_CMIFILES) $(LIB_GTK_CMXFILES)
-	$(OCAMLFIND) ocamlopt $(OF_FLAGS) -a -o $@ $(LIB_GTK_CMXFILES)
+$(LIB_DBF_GTK): $(LIB_DBF_GTK_CMIFILES) $(LIB_DBF_GTK_CMXFILES)
+	$(OCAMLFIND) ocamlopt $(OF_FLAGS) -a -o $@ $(LIB_DBF_GTK_CMXFILES)
 
-$(LIB_GTK_BYTE): $(LIB_GTK_CMIFILES) $(LIB_GTK_CMOFILES)
-	$(OCAMLFIND) ocamlc $(OF_FLAGS) -a -o $@ $(LIB_GTK_CMOFILES)
+$(LIB_DBF_GTK_BYTE): $(LIB_DBF_GTK_CMIFILES) $(LIB_DBF_GTK_CMOFILES)
+	$(OCAMLFIND) ocamlc $(OF_FLAGS) -a -o $@ $(LIB_DBF_GTK_CMOFILES)
 
-$(EXE): $(LIB) $(EXE_CMIFILES) $(EXE_CMXFILES)
-	$(OCAMLFIND) ocamlopt -package $(PACKAGES) -linkpkg -o $@ $(LINKFLAGS) $(LIBS) $(LIB) $(EXE_CMXFILES)
+$(DBFORGE): $(LIB_SQML) $(LIB_DBF) $(DBFORGE_CMIFILES) $(DBFORGE_CMXFILES)
+	$(OCAMLFIND) ocamlopt -package $(PACKAGES) -linkpkg -o $@ $(LINKFLAGS) \
+	$(LIB_SQML) $(LIB_DBF) $(DBFORGE_CMXFILES)
 
-$(EXE_BYTE): $(LIB_BYTE) $(EXE_CMIFILES) $(EXE_CMOFILES)
-	$(OCAMLFIND) ocamlc $ -package $(PACKAGES) -linkpkg -o $@ $(LINKFLAGS) $(LIBS_BYTE) $(LIB_BYTE) $(EXE_CMOFILES)
+$(DBFORGE_BYTE): $(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(DBFORGE_CMIFILES) $(DBFORGE_CMOFILES)
+	$(OCAMLFIND) ocamlc $ -package $(PACKAGES) -linkpkg -o $@ $(LINKFLAGS) \
+	$(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(DBFORGE_CMOFILES)
 
-$(EXE_GTK): $(LIB) $(LIB_GTK) $(EXE_GTK_CMIFILES) $(EXE_GTK_CMXFILES)
+$(DBFORGE_GTK): $(LIB_SQML) $(LIB_DBF) $(LIB_DBF_GTK) $(DBFORGE_GTK_CMIFILES) $(DBFORGE_GTK_CMXFILES)
 	$(OCAMLFIND) ocamlopt -package $(ALL_PACKAGES) -linkpkg -o $@ $(LINKFLAGS) \
-	$(LIBS) $(LIB) $(LIB_GTK) $(EXE_GTK_CMXFILES)
+	$(LIB_SQML) $(LIB_DBF) $(LIB_DBF_GTK) $(DBFORGE_GTK_CMXFILES)
 
-$(EXE_GTK_BYTE): $(LIB_BYTE) $(LIB_GTK_BYTE) $(EXE_GTK_CMIFILES) $(EXE_GTK_CMOFILES)
+$(DBFORGE_GTK_BYTE): $(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) \
+										$(DBFORGE_GTK_CMIFILES) $(DBFORGE_GTK_CMOFILES)
 	$(OCAMLFIND) ocamlc -package $(ALL_PACKAGES) -linkpkg -o $@ $(LINKFLAGS) \
-	$(LIBS_BYTE) $(LIB_BYTE) $(LIB_GTK_BYTE) $(EXE_GTK_CMOFILES)
+	$(LIB_SQML_BYTE) $(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) $(DBFORGE_GTK_CMOFILES)
 
-$(ODOC): $(ODOC_CMIFILES) $(ODOC_CMXFILES)
-	$(OCAMLFIND) ocamlopt -package $(PACKAGES) -linkpkg -shared -o $@ -I +ocamldoc $(ODOC_CMXFILES)
+$(TMPL):
 
-$(ODOC_BYTE): $(ODOC_CMIFILES) $(ODOC_CMOFILES)
-	$(OCAMLFIND) ocamlc -package $(PACKAGES) -linkpkg -a -o $@ -I +ocamldoc $(ODOC_CMOFILES)
-
-$(ODOC_HTML): odoc_htmlcg.cmx
-	$(OCAMLFIND) ocamlopt -package $(PACKAGES) -linkpkg -shared -o $@ -I +ocamldoc $^
-
-$(ODOC_TEST): odoc_cgtest.cmx
-	$(OCAMLFIND) ocamlopt -package $(PACKAGES) -linkpkg -shared -o $@ -I +ocamldoc $^
-
-
+$(LIB_SQML): $(SQML_CMIFILES) $(SQML_CMXFILES)
+	$(OCAMLFIND) ocamlopt -a -o $@ $(LINKFLAGS) $(SQML_CMXFILES)
+$(LIB_SQML_BYTE): $(SQML_CMIFILES) $(SQML_CMOFILES)
+	$(OCAMLFIND) ocamlc -a -custom -o $@ $(LINKFLAGS_BYTE) $(SQML_CMOFILES)
 
 # Test :
 ########

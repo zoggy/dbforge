@@ -11,11 +11,18 @@ package "gtk" (
   archive(byte) = "dbforge_gtk.cma"
   archive(native) = "dbforge_gtk.cmxa"
 )
+package "sql" (
+  version = "@VERSION@"
+  description = "SQL common interface"
+  requires = ""
+  archive(byte) = "dbf_sql.cma"
+  archive(native) = "dbf_sql.cmxa"
+)
 package "mysql" (
   version = "@VERSION@"
   description = "MySQL interface"
-  requires = "mysql"
+  requires = "mysql,dbforge.sql"
   archive(byte) = "dbf_mysql.cma"
-  archive(native) = "dbforge_gtk.cmxa"
+  archive(native) = "dbf_mysql.cmxa"
 
 )

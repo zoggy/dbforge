@@ -68,10 +68,10 @@ AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 
 # Finally create the master.Makefile.in
-ACFILES="master.Makefile src/dbforge/META src/sqml/META src/dbforge/dbf_installation.ml"
+ACFILES="master.Makefile src/dbf/META src/sqml/META src/dbf/dbf_installation.ml"
 AC_OUTPUT($ACFILES)
 chmod a-w master.Makefile
-chmod a-w src/dbforge/META
+chmod a-w src/dbf/META
 chmod a-w src/sqml/META
-chmod a-w src/dbforge/dbf_installation.ml
+chmod a-w src/dbf/dbf_installation.ml
 

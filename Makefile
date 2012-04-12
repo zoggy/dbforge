@@ -41,7 +41,7 @@ doc: dummy
 
 # myself
 
-master.Makefile: master.Makefile.in src/cgversion.ml.in config.status
+master.Makefile: master.Makefile.in src/dbf/dbf_installation.ml.in config.status
 	./config.status
 
 config.status: configure
@@ -55,7 +55,8 @@ configure: configure.in
 
 distclean: clean
 	cd src && $(MAKE) distclean
-	$(RM) config.cache config.log config.status master.Makefile src/cgversion.ml
+	$(RM) config.cache config.log config.status master.Makefile \
+	src/dbf/dbf_installation.ml src/dbf/META src/sqml/META
 
 clean:: dummy
 	$(RM) *~ \#*\#
@@ -69,16 +70,15 @@ dummy:
 ###########
 # Headers
 ###########
-headers: dummy
-	headache -h header -c ~/.headache_config configure.in configure \
+HEADFILES=configure.in configure \
 	master.Makefile.in Makefile src/Makefile checkocaml.ml \
-	src/*.ml src/*.mli src/cgversion.ml.in
+	src/*/*.ml src/*/*.mli src/dbf/dbf_installation.ml.in
+
+headers: dummy
+	headache -h header -c ~/.headache_config $(HEADFILES)
 
 noheaders: dummy
-	headache -r -c ~/.headache_config configure.in configure \
-	master.Makefile.in Makefile src/Makefile checkocaml.ml \
-	src/*.ml src/*.mli src/cgversion.ml.in
-
+	headache -r -c ~/.headache_config $(HEADFILES)
 
 
 #################
@@ -95,7 +95,7 @@ uninstall: dummy
 # archive
 ###########
 archive:
-	git archive --prefix=camlget-$(VERSION)/ HEAD | gzip > /tmp/camlget-$(VERSION).tar.gz
+	git archive --prefix=dbforge-$(VERSION)/ HEAD | gzip > /tmp/dbforge-$(VERSION).tar.gz
 
 ###########################
 # additional dependencies

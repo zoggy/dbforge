@@ -26,7 +26,7 @@
 
 (* $Id$ *)
 
-(*c==m=[OCaml_conf]=0.5=t==*)
+(*c==m=[OCaml_conf]=0.7=t==*)
 
 
   open Sys
@@ -775,7 +775,7 @@ let ocamlfind_query_version conf package =
         _ -> None
 ;;
 
-let check_ocamlfind_package ?min_version ?max_version ?not_found conf name =
+let check_ocamlfind_package ?min_version ?max_version ?(fail=true) ?not_found conf name =
   !print (Printf.sprintf "checking for %s... " name);
   let not_found =
     match not_found with
@@ -783,40 +783,55 @@ let check_ocamlfind_package ?min_version ?max_version ?not_found conf name =
         begin
         function
           | `Package_not_installed pkg ->
-              !fatal_error (Printf.sprintf "Package %s not found" pkg)
+              let msg = Printf.sprintf "Package %s not found" pkg in
+              if fail then
+                !fatal_error msg
+              else
+                !print msg
           | `Package_bad_version version ->
-              !fatal_error
-              (Printf.sprintf "Package %s found with version %s, but wanted %s%s%s"
-               name version
-               (match min_version with
-                  None -> ""
-                | Some v -> Printf.sprintf ">= %s" (string_of_version v)
-               )
-               (match min_version, max_version with
-                 Some _, Some _ -> " and "
-                | _ -> ""
-               )
-               (match max_version with
-                  None -> ""
-                | Some v -> Printf.sprintf "<= %s" (string_of_version v)
-               )
-              )
+              let msg =
+                (Printf.sprintf "Package %s found with version %s, but wanted %s%s%s"
+                 name version
+                 (match min_version with
+                    None -> ""
+                  | Some v -> Printf.sprintf ">= %s" (string_of_version v)
+                 )
+                 (match min_version, max_version with
+                    Some _, Some _ -> " and "
+                  | _ -> ""
+                 )
+                 (match max_version with
+                    None -> ""
+                  | Some v -> Printf.sprintf "<= %s" (string_of_version v)
+                 )
+                )
+              in
+              if fail then
+                !fatal_error msg
+              else
+                !print msg
         end
     | Some f -> f
   in
    match ocamlfind_query conf name with
-      None -> not_found (`Package_not_installed name)
+      None -> not_found (`Package_not_installed name); false
     | Some s ->
-      match ocamlfind_query_version conf name with
-        None -> not_found (`Package_bad_version "<no version>")
-      | Some s ->
-          let version = version_of_string s in
-          let min = match min_version with None -> [] | Some v -> v in
-          let max = match max_version with None -> [max_int] | Some v -> v in
-          if version < min or version > max then
-            not_found (`Package_bad_version s)
-          else
-            !print "ok\n"
+        match min_version, max_version with
+          None, None -> !print "ok\n"; true
+        | _ ->
+            match ocamlfind_query_version conf name with
+              None -> not_found (`Package_bad_version "<no version>"); false
+            | Some s ->
+                let version = version_of_string s in
+                let min = match min_version with None -> [] | Some v -> v in
+                let max = match max_version with None -> [max_int] | Some v -> v in
+                if version < min or version > max then
+                  (
+                   not_found (`Package_bad_version s);
+                   false
+                  )
+                else
+                  ( !print "ok\n" ; true )
 ;;
 
 (** {2:substs Handling substitutions specification} *)
@@ -863,7 +878,7 @@ let add_conf_variables c =
    List.iter (fun (var,v) -> add_subst var v) l
 
 
-(*/c==m=[OCaml_conf]=0.5=t==*)
+(*/c==m=[OCaml_conf]=0.7=t==*)
 
 let ocaml_required = [3;9;0]
 let conf = ocaml_conf ();;
@@ -877,12 +892,12 @@ let _ =
     !print msg; exit 1
 
 let _ = !print "\n### checking required tools and libraries ###\n"
-let () = check_ocamlfind_package conf "xmlm";;
-let () = check_ocamlfind_package conf "config-file";;
-let () = check_ocamlfind_package conf "mysql";;
-let () = check_ocamlfind_package conf "lablgtk2";;
-let () = check_ocamlfind_package conf "lablgtk2.glade";;
-let () = check_ocamlfind_package conf "lablgtk2-extras.configwin";;
+let _ = check_ocamlfind_package conf "xmlm";;
+let _ = check_ocamlfind_package conf "config-file";;
+let _ = check_ocamlfind_package conf "mysql";;
+let _ = check_ocamlfind_package conf "lablgtk2";;
+let _ = check_ocamlfind_package conf "lablgtk2.glade";;
+let _ = check_ocamlfind_package conf "lablgtk2-extras.configwin";;
 
 let _ = !print "\n###\n"
 

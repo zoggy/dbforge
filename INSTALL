@@ -1,0 +1,29 @@
+        DBForge installation
+
+
+*** What you need ***
+- OCaml 3.11 (or later) installed
+- findlib
+     http://projects.camlcity.org/projects/findlib.html
+- Lablgtk2 >= 2.14.2 installed with findlib
+     http://lablgtk.forge.ocamlcore.org/
+- Config-file >= 1.1
+     http://config-file.forge.ocamlcore.org/
+- LablGtk-extras >= 1.1
+     http://gtk-extras.forge.ocamlcore.org/
+- OCaml-MySQL >= 1.0.4
+     http://raevnos.pennmush.org/code/ocaml-mysql/
+- Xml-light
+     http://tech.motion-twin.com/xmllight.html
+- make ;-)
+
+*** How to compile ***
+- ./configure
+- make all
+- make install
+
+This will install the following findlib packages:
+ dbforge, dbforge.gtk, dbforge.sql, dbforge.mysql and sqml
+
+Executables (dbforge, dbforge-gtk) will be installed in
+ocaml bin directory.

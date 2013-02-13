@@ -88,8 +88,16 @@ noheaders: dummy
 install: dummy
 	cd src && $(MAKE) install
 
+# for opam
+install-lib: dummy
+	cd src && $(MAKE) install-lib
+
 uninstall: dummy
 	cd src && $(MAKE) uninstall
+
+# for opam
+uninstall-lib: dummy
+	cd src && $(MAKE) uninstall-lib
 
 
 ###########

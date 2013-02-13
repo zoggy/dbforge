@@ -232,15 +232,15 @@ include .depend
 #################
 # Installation
 #################
-install: all
+install: install-lib install-bin
+
+install-lib:
 	$(OCAMLFIND) install $(PACKAGE) dbf/META \
 		$(LIB_DBF) $(LIB_DBF:.cmxa=.a) $(LIB_DBF_CMIFILES) \
 		$(LIB_SQL) $(LIB_SQL:.cmxa=.a) $(LIB_SQL_CMIFILES) \
 		$(LIB_MYSQL) $(LIB_MYSQL:.cmxa=.cmi) $(LIB_MYSQL:.cmxa=.a) $(LIB_MYSQL:.cmxa=.mli) \
 		$(LIB_DBF_GTK) $(LIB_DBF_GTK:.cmxa=.a) $(LIB_DBF_GTK:.cmxa=.mli) $(LIB_DBF_GTK_CMIFILES) \
 		$(LIB_DBF_BYTE) $(LIB_DBF_GTK_BYTE) $(LIB_SQL_BYTE) $(LIB_MYSQL_BYTE)
-	$(CP) $(DBFORGE) $(DBFORGE_BYTE) $(OCAMLBIN)
-	$(CP) $(DBFORGE_GTK) $(DFBORGE_GTK_BYTE) $(OCAMLBIN)
 	$(OCAMLFIND) install sqml sqml/META \
 		$(LIB_SQML) $(LIB_SQML:.cmxa=.cmi) $(LIB_SQML:.cmxa=.a) $(LIB_SQML_CMIFILES) \
 		$(LIB_SQML_BYTE)
@@ -248,9 +248,17 @@ install: all
 	$(CP) dbf/db.dtd $(DTDDIR)/
 	$(CP) dbf/dbforge.glade $(GLADEDIR)/
 
-uninstall: dummy
+install-bin:
+	$(CP) $(DBFORGE) $(DBFORGE_BYTE) $(OCAMLBIN)
+	$(CP) $(DBFORGE_GTK) $(DFBORGE_GTK_BYTE) $(OCAMLBIN)
+
+uninstall: uninstall-lib uninstall-bin
+
+uninstall-lib: dummy
 	$(OCAMLFIND) remove $(PACKAGE)
 	$(OCAMLFIND) remove sqml
+
+uninstall-bin:
 	$(RM) $(OCAMLBIN)/$(DBFORGE)
 	$(RM) $(OCAMLBIN)/$(DBFORGE_GTK)
 	$(RM) $(OCAMLBIN)/$(DBFORGE_BYTE)

@@ -1,0 +1,2 @@
+Next release:
+- configuration does not require camlp4
